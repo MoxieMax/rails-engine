@@ -2,28 +2,41 @@ require 'rails_helper'
 
 RSpec.describe 'Item API' do
   describe 'RESTful Endpoints' do
-    it 'returns all items' do
-      
+    describe '#index tests' do
+      it 'returns all items' do
+        
+        
+      end
     end
     
-    xit 'returns one item' do
-      
+    describe '#show tests' do
+      xit 'returns one item' do
+        
+      end
     end
     
-    xit 'can create an item' do
-      
+    describe '#new tests' do
+      xit 'can create an item' do
+        
+      end
     end
     
-    xit 'can edit an item' do
-      
+    describe '#edit tests' do
+      xit 'can edit an item' do
+        
+      end
     end
     
-    xit 'can delete an item' do
-      
+    describe '#destroy tests' do
+      xit 'can delete an item' do
+        
+      end
     end
     
-    xit 'can return merchant data for a given item ID' do
-      
+    describe 'merchant data tests' do
+      xit 'can return merchant data for a given item ID' do
+        
+      end
     end
   end
   
