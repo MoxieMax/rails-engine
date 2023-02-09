@@ -64,7 +64,26 @@ RSpec.describe 'Item API' do
     end
     
     describe '#new tests' do
-      xit 'can create an item' do
+      before :each do
+        @merchant = create(:merchant)
+        
+      end
+      
+      it 'can create an item' do
+        item_params = ({
+                        name: "Nail Polish",
+                        description: "lorem ipsum",
+                        unit_price: 14.50,
+                        merchant_id: @merchant.id
+                    })
+        headers = {"CONTENT_TYPE" => "application/json"}
+        
+        post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+        
+        created_item = Item.last
+        
+        expect(response).to be_successful
+        
         
       end
     end
