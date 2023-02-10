@@ -56,30 +56,71 @@ RSpec.describe 'Merchant API' do
     end
     
     describe 'merchant items' do
-      before :each do
-        @merchant = create(:merchant)
-        create_list(:item, 10, merchant_id: @merchant.id)
-        # binding.pry
-        get api_v1_merchant_items_path(@merchant)
+      # before :each do
+      #   @merchant = create(:merchant)
+      #   create_list(:item, 10, merchant_id: @merchant.id)
+      #   # binding.pry
+      #   get api_v1_merchant_items_path(@merchant)
+      # 
+      #   expect(response).to be_successful
+      # 
+      #   @items = JSON.parse(response.body, symbolize_names: true)
+      # end
+      
+      it 'returns all items for a given merchant ID' do
+        merchant = create(:merchant)
+        create_list(:item, 10, merchant_id: merchant.id)
+        
+        get "/api/v1/merchants/#{merchant.id}/items"
+        
+        items = JSON.parse(response.body, symbolize_names: true)
         
         expect(response).to be_successful
         
-        @items = JSON.parse(response.body, symbolize_names: true)
+        expect(merchant).to be_a(Merchant)
+        expect(items).to be_a(Hash)
+        expect(items).to have_key(:data)
+        expect(items[:data]).to be_an(Array)
+        
+        items[:data].each do |item|
+          expect(item).to have_key(:id)
+          expect(item[:id]).to be_a(String)
+          
+          expect(item).to have_key(:type)
+          expect(item[:type]).to be_a(String)
+          
+          expect(item).to have_key(:attributes)
+          expect(item[:attributes]).to be_a(Hash)
+          
+          expect(item[:attributes]).to have_key(:name)
+          expect(item[:attributes][:name]).to be_a(String)
+          
+          expect(item[:attributes]).to have_key(:description)
+          expect(item[:attributes][:description]).to be_a(String)
+          
+          expect(item[:attributes]).to have_key(:unit_price)
+          expect(item[:attributes][:unit_price]).to be_a(Float)
+          
+          expect(item[:attributes]).to have_key(:merchant_id)
+          expect(item[:attributes][:merchant_id]).to be_a(Integer)
+        end
+        
+        
       end
       
-      it 'returns all items for a given merchant ID' do
-        item1 = @items[:data].first
-        
-        expect(@merchant).to be_a(Merchant)
-        expect(@items).to be_a(Hash)
-        expect(@items[:data]).to be_an(Array)
-        expect(@items[:data].count).to eq(10)
-        expect(item1[:id]).to be_a(String)
-        expect(item1[:id].to_i).to be_an(Integer) #if it wasn't a number, it wouldn't convert
-        expect(item1[:type]).to eq('item')
-        expect(item1[:attributes]).to be_a(Hash)
-        expect(item1[:attributes].keys).to eq([:name, :description, :unit_price, :merchant_id])
-      end
+      # it 'returns all items for a given merchant ID' do
+      #   item1 = @items[:data].first
+      # 
+      #   expect(@merchant).to be_a(Merchant)
+      #   expect(@items).to be_a(Hash)
+      #   expect(@items[:data]).to be_an(Array)
+      #   expect(@items[:data].count).to eq(10)
+      #   expect(item1[:id]).to be_a(String)
+      #   expect(item1[:id].to_i).to be_an(Integer) #if it wasn't a number, it wouldn't convert
+      #   expect(item1[:type]).to eq('item')
+      #   expect(item1[:attributes]).to be_a(Hash)
+      #   expect(item1[:attributes].keys).to eq([:name, :description, :unit_price, :merchant_id])
+      # end
     end
   end
 end
