@@ -6,7 +6,7 @@ RSpec.describe 'Item API' do
       before :each do
         @merchant = create(:merchant)
         create_list(:item, 10, merchant_id: @merchant.id)
-        # binding.pry
+        
         get api_v1_items_path
         
         expect(response).to be_successful
@@ -36,23 +36,36 @@ RSpec.describe 'Item API' do
     end
     
     describe '#show tests' do
-      before :each do
-        @merchant = create(:merchant)
-        @item = create(:item, merchant_id: @merchant.id)
-
-        get api_v1_items_path(@item)
-
-        expect(response).to be_successful
-
-        @items = JSON.parse(response.body, symbolize_names: true)
-      end
-      
       it 'returns one item' do
-        expect(@item).to be_an(Item)
-        expect(@item.id).to be_an(Integer)
-        expect(@item.name).to be_a(String)
-        expect(@item.description).to be_a(String)
-        expect(@item.unit_price).to be_a(Float)
+        merchant = create(:merchant)
+        id = create(:item, merchant_id: merchant.id).id
+
+        get "/api/v1/items/#{id}"
+
+        item1 = JSON.parse(response.body, symbolize_names: true)
+        expect(response).to be_successful
+        
+        expect(item1).to have_key(:data)
+        expect(item1[:data]).to have_key(:id)
+        expect(item1[:data]).to have_key(:type)
+        expect(item1[:data]).to have_key(:attributes)
+        
+        
+        expect(item1).to be_a(Hash)
+        expect(item1).to have_key(:data)
+        
+        expect(item1[:data]).to be_a(Hash)
+        expect(item1[:data]).to have_key(:id)
+        expect(item1[:data][:id]).to be_a(String)
+        expect(item1[:data]).to have_key(:attributes)
+        
+        expect(item1[:data][:attributes]).to be_a(Hash)
+        expect(item1[:data][:attributes]).to have_key(:name)
+        expect(item1[:data][:attributes][:name]).to be_a(String)
+        expect(item1[:data][:attributes]).to have_key(:description)
+        expect(item1[:data][:attributes][:description]).to be_a(String)
+        expect(item1[:data][:attributes]).to have_key(:unit_price)
+        expect(item1[:data][:attributes][:unit_price]).to be_a(Float)
       end
       
       it 'returns a 404 error for an invalid ID' do
@@ -66,23 +79,27 @@ RSpec.describe 'Item API' do
     describe '#create tests' do
       it 'can create an item' do
         merchant = create(:merchant)
-        item_params = {
-                        name: "Nail Polish",
+        item_params = ({
+                        name: "Shiny thing",
                         description: "lorem ipsum dolor sit amet",
                         unit_price: 14.50,
                         merchant_id: merchant.id
-                      }
-        headers = {"CONTENT_TYPE" => "application/json"}
+                      })
+        headers = { "CONTENT_TYPE" => "application/json" }
         
         post api_v1_items_path, headers: headers, params: JSON.generate(item: item_params)
-        
+
         item = Item.last
-        binding.pry
         
         expect(response).to be_successful
         
         get api_v1_item_path(item)
+        
         expect(item.name).to eq(item_params[:name])
+        expect(item.description).to eq(item_params[:description])
+        expect(item.unit_price).to eq(item_params[:unit_price])
+        expect(item.merchant_id).to eq(item_params[:merchant_id])
+        expect(item.merchant_id).to eq(merchant.id)
       end
     end
     
@@ -93,8 +110,13 @@ RSpec.describe 'Item API' do
     end
     
     describe '#destroy tests' do
-      xit 'can delete an item' do
+      it 'can delete an item' do
+        merchant = create(:merchant)
+        item = create(:item, merchant_id: merchant.id)
         
+        expect(Item.count).to eq(1)
+        item.delete
+        expect(Item.count).to eq(0)
       end
     end
     
