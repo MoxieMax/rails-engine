@@ -5,11 +5,11 @@ RSpec.describe 'Merchant API' do
     describe '#index tests' do
       before :each do
         create_list(:merchant, 10)
-
+        
         get api_v1_merchants_path
-
+        
         expect(response).to be_successful
-
+        
         @merchants = JSON.parse(response.body, symbolize_names: true)
         @merchant1 = @merchants[:data].first
       end

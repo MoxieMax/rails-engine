@@ -104,8 +104,35 @@ RSpec.describe 'Item API' do
     end
     
     describe '#edit tests' do
-      xit 'can edit an item' do
+      it 'can edit an item' do
+        merchant = create(:merchant)
+        item = create(:item, merchant_id: merchant.id)
+        name = item.name
+        description = item.description
+        unit_price = item.unit_price
+        item_params = ({
+                        name: "Shiny thing",
+                        description: "lorem ipsum dolor sit amet",
+                        unit_price: 14.50,
+                        merchant_id: merchant.id
+                      })
+        headers = { "CONTENT_TYPE" => "application/json" }
         
+        expect(name).to eq(item.name)
+        expect(description).to eq(item.description)
+        expect(unit_price).to eq(item.unit_price)
+        
+        patch api_v1_item_path(item), headers: headers, params: JSON.generate(item: item_params)
+        
+        item = Item.last
+        
+        get api_v1_item_path(item)
+        
+        expect(response).to be_successful
+        
+        expect(item.name).to eq(item_params[:name])
+        expect(item.description).to eq(item_params[:description])
+        expect(item.unit_price).to eq(item_params[:unit_price])
       end
     end
     
@@ -121,8 +148,25 @@ RSpec.describe 'Item API' do
     end
     
     describe 'merchant data tests' do
-      xit 'can return merchant data for a given item ID' do
-        
+      it 'can return merchant data for a given item ID' do
+        merchant = create(:merchant)
+        item = create(:item, merchant_id: merchant.id)
+
+        # get "/api/v1/items/#{item.id}/#{merchant.id}"
+        get "/api/v1/items/#{item.id}/merchants/#{merchant.id}"
+        # get api_v1_item_merchant(item.id, merchant.id)
+        expect(response).to be_successful
+
+        merchant_parse = JSON.parse(response.body, symbolize_names: true)
+
+        expect(merchant_parse).to be_a(Hash)
+        expect(merchant_parse[:data]).to be_a(Hash)
+        expect(merchant_parse[:data].keys).to eq([:id, :type, :attributes])
+        expect(merchant_parse[:data][:id]).to be_a(String)
+        expect(merchant_parse[:data][:type]).to eq("merchant")
+        expect(merchant_parse[:data][:attributes]).to be_a(Hash)
+        expect(merchant_parse[:data][:attributes]).to have_key(:name)
+        expect(merchant_parse[:data][:attributes][:name]).to be_a(String)
       end
     end
   end
