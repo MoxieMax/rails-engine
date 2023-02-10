@@ -104,23 +104,7 @@ RSpec.describe 'Merchant API' do
           expect(item[:attributes]).to have_key(:merchant_id)
           expect(item[:attributes][:merchant_id]).to be_a(Integer)
         end
-        
-        
       end
-      
-      # it 'returns all items for a given merchant ID' do
-      #   item1 = @items[:data].first
-      # 
-      #   expect(@merchant).to be_a(Merchant)
-      #   expect(@items).to be_a(Hash)
-      #   expect(@items[:data]).to be_an(Array)
-      #   expect(@items[:data].count).to eq(10)
-      #   expect(item1[:id]).to be_a(String)
-      #   expect(item1[:id].to_i).to be_an(Integer) #if it wasn't a number, it wouldn't convert
-      #   expect(item1[:type]).to eq('item')
-      #   expect(item1[:attributes]).to be_a(Hash)
-      #   expect(item1[:attributes].keys).to eq([:name, :description, :unit_price, :merchant_id])
-      # end
     end
   end
 end
