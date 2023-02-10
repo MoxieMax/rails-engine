@@ -55,36 +55,34 @@ RSpec.describe 'Item API' do
         expect(@item.unit_price).to be_a(Float)
       end
       
-      xit 'returns a 404 error for an invalid ID' do
-        get 'api/v1/items/98765'
+      it 'returns a 404 error for an invalid ID' do
+        get '/api/v1/items/98765'
       
         expect(response).to_not be_successful
         expect(response).to have_http_status(404)
       end
     end
     
-    describe '#new tests' do
-      before :each do
-        @merchant = create(:merchant)
-        
-      end
-      
+    describe '#create tests' do
       it 'can create an item' do
-        item_params = ({
+        merchant = create(:merchant)
+        item_params = {
                         name: "Nail Polish",
-                        description: "lorem ipsum",
+                        description: "lorem ipsum dolor sit amet",
                         unit_price: 14.50,
-                        merchant_id: @merchant.id
-                    })
+                        merchant_id: merchant.id
+                      }
         headers = {"CONTENT_TYPE" => "application/json"}
         
-        post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+        post api_v1_items_path, headers: headers, params: JSON.generate(item: item_params)
         
-        created_item = Item.last
+        item = Item.last
+        binding.pry
         
         expect(response).to be_successful
         
-        
+        get api_v1_item_path(item)
+        expect(item.name).to eq(item_params[:name])
       end
     end
     

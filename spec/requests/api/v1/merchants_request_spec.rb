@@ -46,8 +46,8 @@ RSpec.describe 'Merchant API' do
         expect(@merchant.name).to be_a(String)
       end
       
-      xit 'returns a 404 error for an invalid ID' do
-        get 'api/v1/merchants/98765'
+      it 'returns a 404 error for an invalid ID' do
+        get '/api/v1/merchants/98765'
       
         expect(response).to_not be_successful
         expect(response).to have_http_status(404)
