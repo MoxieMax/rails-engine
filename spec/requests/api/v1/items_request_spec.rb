@@ -42,7 +42,38 @@ RSpec.describe "Items", type: :request do
     end
     
     describe "#show" do
+      before :each do
+        @merchant = create(:merchant)
+        @id = create(:item, merchant_id: @merchant.id).id
+
+        get "/api/v1/items/#{@id}"
+        
+        expect(response).to be_successful
+        
+        @item = JSON.parse(response.body, symbolize_names: true)
+      end
       
+      it "returns one item" do
+        expect(@item).to be_a(Hash)
+        expect(@item).to have_key(:data)
+        
+        expect(@item[:data]).to have_key(:id)
+        expect(@item[:data]).to have_key(:type)
+        expect(@item[:data][:type]).to eq("item")
+        expect(@item[:data]).to have_key(:attributes)
+        
+        expect(@item[:data][:attributes]).to have_key(:name)
+        expect(@item[:data][:attributes]).to have_key(:description)
+        expect(@item[:data][:attributes]).to have_key(:unit_price)
+        expect(@item[:data][:attributes]).to have_key(:merchant_id)
+      end
+      
+      xit 'returns a 404 error for an invalid ID' do
+        get '/api/v1/items/24601'
+      
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(404)
+      end
     end
   end
 end
