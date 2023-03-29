@@ -34,20 +34,32 @@ RSpec.describe "Merchants API", type: :request do
     end
     
     describe "#show" do
-      before :each do
-        @merchant = create(:merchant)
-
-        get api_v1_merchants_path(@merchant)
+      # before :each do
+      #   @merchant = create(:merchant)
+      # 
+      #   get api_v1_merchants_path(@merchant)
+      # 
+      #   expect(response).to be_successful
+      # 
+      #   @merchants = JSON.parse(response.body, symbolize_names: true)
+      # end
+      
+      it "returns a specified merchant" do
+        merchant = create(:merchant)
+        
+        get api_v1_merchants_path(merchant)
 
         expect(response).to be_successful
 
-        @merchants = JSON.parse(response.body, symbolize_names: true)
-      end
-      
-      it "returns a specified merchant" do
-        expect(@merchant).to be_a(Merchant)
-        expect(@merchant.id).to be_an(Integer)
-        expect(@merchant.name).to be_a(String)
+        merchants = JSON.parse(response.body, symbolize_names: true)
+        
+        expect(merchant).to be_a(Merchant)
+        expect(merchant.id).to be_an(Integer)
+        expect(merchant.name).to be_a(String)
+        
+        # expect(@merchant).to be_a(Merchant)
+        # expect(@merchant.id).to be_an(Integer)
+        # expect(@merchant.name).to be_a(String)
       end
       
       xit "returns a 404 error for an invalid ID" do
