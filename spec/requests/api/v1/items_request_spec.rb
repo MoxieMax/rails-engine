@@ -71,7 +71,7 @@ RSpec.describe "Items", type: :request do
         expect(attributes[:merchant_id]).to be_a(Integer)
       end
       
-      xit 'returns a 404 error for an invalid ID' do
+      it 'returns a 404 error for an invalid ID' do
         get '/api/v1/items/24601'
       
         expect(response).to_not be_successful

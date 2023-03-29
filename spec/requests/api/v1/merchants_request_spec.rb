@@ -62,7 +62,7 @@ RSpec.describe "Merchants API", type: :request do
         # expect(@merchant.name).to be_a(String)
       end
       
-      xit "returns a 404 error for an invalid ID" do
+      it "returns a 404 error for an invalid ID" do
         get '/api/v1/merchants/24601'
         
         expect(response).to_not be_successful
