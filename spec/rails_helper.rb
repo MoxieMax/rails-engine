@@ -69,6 +69,6 @@ Shoulda::Matchers.configure do |config|
   end
 end
 
-Spec.configure do |config|
+RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
 end
