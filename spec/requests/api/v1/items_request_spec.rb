@@ -106,20 +106,20 @@ RSpec.describe "Items", type: :request do
       end
     end
     
-    describe "#edit" do
+    describe "#update" do
       it 'can edit an item' do
-        merchant = create(:merchant)
-        item = create(:item, merchant_id: merchant.id)
-        name = item.name
+        merchant    = create(:merchant)
+        item        = create(:item, merchant_id: merchant.id)
+        name        = item.name
         description = item.description
-        unit_price = item.unit_price
+        unit_price  = item.unit_price
         item_params = ({
                         name: "Shiny thing",
                         description: "lorem ipsum dolor sit amet",
                         unit_price: 14.50,
                         merchant_id: merchant.id
                       })
-        headers = { "CONTENT_TYPE" => "application/json" }
+        headers     = { "CONTENT_TYPE" => "application/json" }
         
         expect(name).to eq(item.name)
         expect(description).to eq(item.description)
@@ -134,13 +134,17 @@ RSpec.describe "Items", type: :request do
         expect(response).to be_successful
         
         expect(item.name).to eq(item_params[:name])
+        expect(item.name).to_not eq(name)
+        
         expect(item.description).to eq(item_params[:description])
+        expect(item.name).to_not eq(description)
+        
         expect(item.unit_price).to eq(item_params[:unit_price])
-        binding.pry
+        expect(item.name).to_not eq(unit_price)
       end
     end
     
-    describe "#delete" do
+    describe "#destroy" do
       it 'can delete an item' do
         merchant = create(:merchant)
         item = create(:item, merchant_id: merchant.id)

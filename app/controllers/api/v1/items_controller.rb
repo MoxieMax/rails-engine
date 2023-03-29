@@ -9,7 +9,24 @@ class Api::V1::ItemsController < ApplicationController
   
   def create
     item = Item.create!(item_params)
-    render json: ItemSerializer.new(item)#, status: 201
+    render json: ItemSerializer.new(item), status: 201
+  end
+  
+  def update
+    if Item.exists?(params[:id])
+      item = Item.find(params[:id])
+      if item.update(item_params)
+        render json: ItemSerializer.new(item)
+      else
+        render json: { error: 'Item not updated' }, status: 404
+      end
+    else
+      error_response(error)
+    end
+  end
+  
+  def destroy
+    Item.delete(params[:id])
   end
   
   private
