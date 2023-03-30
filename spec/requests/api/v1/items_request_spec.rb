@@ -150,8 +150,17 @@ RSpec.describe "Items", type: :request do
         item = create(:item, merchant_id: merchant.id)
         
         expect(Item.count).to eq(1)
-        item.delete
+        
+        delete api_v1_item_path(item)
+        
+        # expect(Item.count).to eq(1)
+        # item.delete
         expect(Item.count).to eq(0)
+        
+        get "/api/v1/items/#{item.id}"
+        
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(404)
       end
     end
   end
