@@ -167,7 +167,9 @@ RSpec.describe "Items", type: :request do
         merchant = create(:merchant)
         item     = create(:item, merchant_id: merchant.id)
         # binding.pry
-        get api_v1_merchant_path(item)
+        # get api_v1_merchant_path(item)
+        get api_v1_merchant_items_path(item)
+        
         expect(response).to be_successful
         
         merchant_info = JSON.parse(response.body, symbolize_names: true)
