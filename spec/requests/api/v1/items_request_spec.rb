@@ -81,14 +81,14 @@ RSpec.describe "Items", type: :request do
     
     describe "#create" do
       it "can create an item using given params" do
-        merchant = create(:merchant)
+        merchant    = create(:merchant)
         item_params = ({
                         name: "Shiny thing",
                         description: "lorem ipsum dolor sit amet",
                         unit_price: 14.50,
                         merchant_id: merchant.id
                       })
-        headers = { "CONTENT_TYPE" => "application/json" }
+            headers = { "CONTENT_TYPE" => "application/json" }
         
         post api_v1_items_path, headers: headers, params: JSON.generate(item: item_params)
         
@@ -147,7 +147,7 @@ RSpec.describe "Items", type: :request do
     describe "#destroy" do
       it 'can delete an item' do
         merchant = create(:merchant)
-        item = create(:item, merchant_id: merchant.id)
+        item     = create(:item, merchant_id: merchant.id)
         
         expect(Item.count).to eq(1)
         
@@ -159,6 +159,20 @@ RSpec.describe "Items", type: :request do
         
         expect(response).to_not be_successful
         expect(response).to have_http_status(404)
+      end
+    end
+    
+    describe "#merchants_items" do
+      it "returns the merchant data for a given item " do
+        merchant = create(:merchant)
+        item     = create(:item, merchant_id: merchant.id)
+        # binding.pry
+        get api_v1_merchant_path(item)
+        expect(response).to be_successful
+        
+        merchant_info = JSON.parse(response.body, symbolize_names: true)
+        
+        binding.pry
       end
     end
   end
