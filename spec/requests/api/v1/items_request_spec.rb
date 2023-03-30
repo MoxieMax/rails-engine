@@ -153,8 +153,6 @@ RSpec.describe "Items", type: :request do
         
         delete api_v1_item_path(item)
         
-        # expect(Item.count).to eq(1)
-        # item.delete
         expect(Item.count).to eq(0)
         
         get "/api/v1/items/#{item.id}"
