@@ -39,6 +39,15 @@ class Api::V1::ItemsController < ApplicationController
     Item.delete(params[:id])
   end
   
+  def search
+    case
+    when params[:name]
+      render json: ItemSerializer.new(Item.find_first_name(params[:name]))
+    else
+      render status: 400
+    end
+  end
+  
   private
   
     def item_params

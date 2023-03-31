@@ -214,5 +214,24 @@ RSpec.describe "Items", type: :request do
         expect(attributes[:merchant_name]).to eq(merchant.name)
       end
     end
+    
+    describe "#search" do
+      it "can search for an item by name, returns first result alphabetically" do
+        merchant = Merchant.create!(name: 'Testing')
+        item1    = Item.create!(name: 'Ring World', description: 'get', unit_price: 1, merchant_id: merchant.id)
+        item2    = Item.create!(name: 'Turing', description: 'good', unit_price: 1, merchant_id: merchant.id)
+        item3    = Item.create!(name: 'Neither', description: 'scrub', unit_price: 1, merchant_id: merchant.id)
+        
+        get api_v1_items_find_path, params: { name: 'Ring' }
+        binding.pry
+        expect(response).to be_successful
+        
+        items = JSON.parse(response.body, symbolize_names: true)
+        
+        expect(items[:data][:attributes][:name]).to eq(item1.name)
+        expect(items[:data][:attributes][:name]).to not_include(item2.name)
+        
+      end
+    end
   end
 end

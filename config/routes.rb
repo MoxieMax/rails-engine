@@ -15,6 +15,12 @@ Rails.application.routes.draw do
       resources :items do
         get "/items/:item_id", to: "items#show"
       end
+      
+      get "/items/find", to: "items#find"
+      # get "/items/find_all", to: "items#find_all"
+      get "/merchants/find", to: "merchants#find"
+      # get "/merchants/find_all", to: "merchants#find_all"
+      
     end
   end
 end
