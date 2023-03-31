@@ -34,16 +34,6 @@ RSpec.describe "Merchants API", type: :request do
     end
     
     describe "#show" do
-      # before :each do
-      #   @merchant = create(:merchant)
-      # 
-      #   get api_v1_merchants_path(@merchant)
-      # 
-      #   expect(response).to be_successful
-      # 
-      #   @merchants = JSON.parse(response.body, symbolize_names: true)
-      # end
-      
       it "returns a specified merchant" do
         merchant = create(:merchant)
         
@@ -51,18 +41,30 @@ RSpec.describe "Merchants API", type: :request do
 
         expect(response).to be_successful
 
-        merchants = JSON.parse(response.body, symbolize_names: true)
+        merchants   = JSON.parse(response.body, symbolize_names: true)
+        data        = merchants[:data].first
+        attr        = data[:attributes]
+
+        expect(merchants).to be_a(Hash)
+        expect(merchants).to have_key(:data)
         
-        expect(merchant).to be_a(Merchant)
-        expect(merchant.id).to be_an(Integer)
-        expect(merchant.name).to be_a(String)
+        expect(data).to eq(merchants[:data].first)
         
-        # expect(@merchant).to be_a(Merchant)
-        # expect(@merchant.id).to be_an(Integer)
-        # expect(@merchant.name).to be_a(String)
+        expect(data).to have_key(:id)
+        expect(data[:id]).to be_a(String)
+        
+        expect(data).to have_key(:type)
+        expect(data[:type]).to be_a(String)
+        
+        expect(data).to have_key(:attributes)
+        expect(data[:attributes]).to be_a(Hash)
+        
+        expect(attr).to eq(merchants[:data].first[:attributes])
+        expect(attr).to have_key(:name)
+        expect(attr[:name]).to be_a(String)
       end
       
-      xit "returns a 404 error for an invalid ID" do
+      it "returns a 404 error for an invalid ID" do
         get '/api/v1/merchants/24601'
         
         expect(response).to_not be_successful
