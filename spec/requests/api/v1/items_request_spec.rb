@@ -141,6 +141,33 @@ RSpec.describe "Items", type: :request do
         
         expect(item.unit_price).to eq(item_params[:unit_price])
         expect(item.name).to_not eq(unit_price)
+        
+        expect(response).to have_http_status(200)
+      end
+      
+      it "won't update with invalid information" do
+        merchant    = create(:merchant)
+        item        = create(:item, merchant_id: merchant.id)
+        name        = item.name
+        description = item.description
+        unit_price  = item.unit_price
+        item_params = ({
+                        name: ,
+                        description: "lorem ipsum dolor sit amet",
+                        unit_price: 14.50,
+                        merchant_id: 24601
+                      })
+        headers     = { "CONTENT_TYPE" => "application/json" }
+        
+        patch api_v1_item_path(item), headers: headers, params: JSON.generate(item: item_params)
+        
+        expect(response).to_not be_successful
+      end
+      
+      it "can't update an item that doesn't exist" do
+        get "/api/v1/items/24601"
+        
+        expect(response).to_not be_successful
       end
     end
     
@@ -166,15 +193,25 @@ RSpec.describe "Items", type: :request do
       it "returns the merchant data for a given item " do
         merchant = create(:merchant)
         item     = create(:item, merchant_id: merchant.id)
-        # binding.pry
-        # get api_v1_merchant_path(item)
-        get api_v1_merchant_items_path(item)
-        
+
+        get api_v1_items_path(item)
         expect(response).to be_successful
         
-        merchant_info = JSON.parse(response.body, symbolize_names: true)
+        merch_info = JSON.parse(response.body, symbolize_names: true)
+        data       = merch_info[:data].first
+        attributes = data[:attributes]
         
-        binding.pry
+        expect(merch_info).to be_a(Hash)
+        expect(data).to be_a(Hash)
+        expect(attributes).to be_a(Hash)
+        
+        expect(data).to have_key(:attributes)
+        
+        expect(attributes).to have_key(:merchant_id)
+        expect(attributes[:merchant_id]).to eq(merchant.id)
+        
+        expect(attributes).to have_key(:merchant_name)
+        expect(attributes[:merchant_name]).to eq(merchant.name)
       end
     end
   end

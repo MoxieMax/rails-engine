@@ -9,10 +9,11 @@ Rails.application.routes.draw do
       # resources :customers, only: [:index, :show]
       resources :merchants, only: [:index, :show] do
         resources :items, only: [:index]
+        # http://localhost:3000/api/v1/merchants/{{merchant_id}}/items
       end
       
       resources :items do
-        get "/merchant/:merchant_id", to: "merchants#show"
+        get "/items/:item_id", to: "items#show"
       end
     end
   end

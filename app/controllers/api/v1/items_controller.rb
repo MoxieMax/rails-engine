@@ -1,6 +1,12 @@
 class Api::V1::ItemsController < ApplicationController
   def index
-    render json: ItemSerializer.new(Item.all)
+    if Item.where(merchant_id: params[:merchant_id]).exists?
+      render json: ItemSerializer.new(Merchant.find(params[:merchant_id]).items)
+    elsif params[:merchant_id] && !Item.where(merchant_id: params[:merchant_id]).exists?
+      render status: 404
+    else
+      render json: ItemSerializer.new(Item.all)
+    end
   end
   
   def show
@@ -21,11 +27,11 @@ class Api::V1::ItemsController < ApplicationController
       item = Item.find(params[:id])
       if item.update(item_params)
         render json: ItemSerializer.new(item)
-      else
+      else 
         render json: { error: 'Item not updated' }, status: 404
       end
     else
-      error_response(error)
+      render status: 404
     end
   end
   
